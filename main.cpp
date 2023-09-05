@@ -1,120 +1,142 @@
+#ifndef UNICODE
+#define UNICODE
+#endif
+
+#include <tchar.h>
 #include <Windows.h>
+#include <new>
 
-//Apparently all the strings should be ASCII code based
-//g++ .\main.cpp -o main.exe -lgdi32
-LRESULT Wndproc(
-  HWND hWindow,
-  UINT uMessage,
-  WPARAM wParam,
-  LPARAM lParam
-)
-{
+#include "basewindow.h"
 
-  LRESULT Result = 0;
+struct StateInfo{
 
-  //No debug messages
-  //Issue is here
-  switch(uMessage){
-    case WM_SIZE:
-    {
-      OutputDebugStringA("WM_SIZE");
-    }break;
-    case WM_DESTROY:
-    {
-      OutputDebugStringA("WM_DESTROY");
-    }break;
-    case WM_CLOSE:
-    {
-      OutputDebugStringA("WM_CLOSE");
-    }break;
-    case WM_ACTIVATEAPP:
-    {
-      OutputDebugStringA("WM_ACTIVATEAPP");
-    }break;
-    case WM_PAINT:
-    {
-      PAINTSTRUCT Paint;
-      HDC DeviceContext = BeginPaint(hWindow,&Paint);
-      LONG Height = Paint.rcPaint.bottom - Paint.rcPaint.top;
-      LONG Width = Paint.rcPaint.right - Paint.rcPaint.left;
-      PatBlt(DeviceContext,Paint.rcPaint.left, Paint.rcPaint.right,Width,Height,BLACKNESS);
-      EndPaint(hWindow,&Paint);
-    }break;
-    default:
-    {
-      OutputDebugStringA("default");
-      Result = DefWindowProc(hWindow,uMessage,wParam,lParam);
-    }break;
-    
-  }
+};
 
-  return Result;
+//Request for compiler to implement this in the place of the call to get rid off overhead
+inline StateInfo* GetAppState(HWND hwnd){
+  LONG_PTR ptr = GetWindowLongPtr(hwnd, GWLP_USERDATA);
+  StateInfo *pState = reinterpret_cast<StateInfo*>(ptr);
+  return pState;
 }
 
-//CONSIDER WHAT IS GOING ON UP THE CALLSTACK
+void OnSize(HWND hwnd, UINT flag, int width, int height){
+  //TODO
+}
 
-//an entry point windows graphical application
-//called by C runtime library(CRT)
-int CALLBACK 
-WinMain(
-  HINSTANCE hInstance,
-  HINSTANCE hPrevInstance,
-  LPSTR     lpCmdLine,
-  int       nShowCmd)
-  {
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 
-    //MessageBoxA(0,"Hello world!","Title",MB_OK|MB_ICONINFORMATION);
+  //CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
+  //pState
 
-    //Is a struct, = {} initializes all members to "0 value"
-    WNDCLASSA Window = {};
+  StateInfo* pState;
+  if(uMsg == WM_CREATE){
+    //Most dangerous casting
+    CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
+    //pState points to lpCreateParams
+    pState = reinterpret_cast<StateInfo*>(pCreate->lpCreateParams);
+    SetWindowLongPtr(hwnd,GWLP_USERDATA, (LONG_PTR)pState);
+  }
+  else{
+    pState = GetAppState(hwnd);
+  }
 
-    //Recheck later
-    Window.style = CS_OWNDC|CS_HREDRAW|CS_VREDRAW;
-    Window.lpfnWndProc = Wndproc;
-    //Window.cbClsExtra = 0;
-    //Window.cbWndExtra = 0;
-    Window.hInstance = hInstance;
-    //Window.hIcon = 0; //Icon of an app
-    //Window.hCursor = 0; //Important for later, mouse cursor
-    //Window.hbrBackground = 0; //Background color?
-    //Window.lpszMenuName = 0;
-    Window.lpszClassName = "idk";
+  switch(uMsg){
+    /*
+    case WM_SIZE:{
+      int width = LOWORD(lParam);
+      int height= HIWORD(lParam);
 
-    if (RegisterClassA(&Window)){
-   
-    HWND WindowHandle = CreateWindowExA(
-          0,
-          Window.lpszClassName,
-          "LL",
-          WS_OVERLAPPEDWINDOW|WS_VISIBLE,
-          CW_USEDEFAULT,
-          CW_USEDEFAULT,
-          CW_USEDEFAULT,
-          CW_USEDEFAULT,
-          0,
-          0,
-          hInstance,
-          0);
-          //Check if not NULL
-          if(WindowHandle){
-            MSG Message;
-            for(;;){
-              BOOL MSGRES = GetMessageA(&Message,0,0,0);
-              if (MSGRES>0){
-                TranslateMessage(&Message);
-                DispatchMessage(&Message);
-              }
-              else{
-                break;
-              }
-            }
-          }
-          else{
-            //TODO
-          }
-    }
-    else{
-      //TODO
+      OnSize(hwnd, (UINT)wParam, width, height);    
+    }break;
+    return 0;
+    */
+
+    case WM_PAINT:{
+      PAINTSTRUCT ps;
+
+      HDC hdc = BeginPaint(hwnd, &ps);
+
+      FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW+1));
+
+      EndPaint(hwnd, &ps);
+    }break;
+    return 0;
+
+    case WM_DESTROY:
+      PostQuitMessage(0);
+      return 0;
+
+    /*
+    case WM_CLOSE:{
+      if (MessageBox(hwnd,L"Really quit?",L"My application",MB_OKCANCEL) == IDOK){
+        DestroyWindow(hwnd);
+      }
     }
     return 0;
+    */
   }
+
+  return DefWindowProc(hwnd,uMsg,wParam,lParam);
+}
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, int nCmdShow){
+
+  //There is a mismatch between LPCSTR type and const wchar_t... for some reason?
+  //RESOLUTION: UNICODE needs to be defined in macro-way
+  const wchar_t CLASS_NAME[] = L"Window Class";
+  WNDCLASS wc = {};
+
+  //wc.lpfnWndProc = WindowProc; &THIS HAS TO BE DEFINED NEXT ALONG WITH THE MESSAGE DECODING&
+  //https://learn.microsoft.com/en-us/windows/win32/learnwin32/window-messages
+  //https://learn.microsoft.com/en-us/windows/win32/learnwin32/writing-the-window-procedure
+
+  wc.lpfnWndProc = WindowProc;
+  wc.hInstance = hInstance;
+  wc.lpszClassName = CLASS_NAME;
+
+  RegisterClass(&wc);
+
+  //Is using new good idea?
+  //StateInfo *pState = new (std::nothrow) StateInfo;
+
+  //if(pState == NULL){
+  //  return 0;
+  //}
+
+  HWND hwnd = CreateWindowEx(
+    0,
+    CLASS_NAME,
+    L"Window text",
+    WS_OVERLAPPEDWINDOW,
+    CW_USEDEFAULT,
+    CW_USEDEFAULT,
+    CW_USEDEFAULT,
+    CW_USEDEFAULT,
+    NULL,
+    NULL,
+    hInstance,
+    //pState
+    NULL
+  );
+
+  if (hwnd == NULL){
+    return 0;
+  }
+
+  ShowWindow(hwnd, nCmdShow);
+
+  MSG msg = {};
+  //Msg arriving to a procees in queue
+  //GetMessage(&msg,NULL,0,0);
+
+  //Then only case in which GetMessage can return nonzero value is when WM_QUIT message is placed in message queue. Calling PostQuitMessage causes this. 
+  while (GetMessage(&msg, NULL, 0, 0) > 0)
+  {
+    TranslateMessage(&msg);
+    DispatchMessage(&msg);
+  }
+
+  //delete(pState);
+
+  return 0;
+}
