@@ -6,15 +6,39 @@
 #include <Windows.h>
 #include <new>
 
+#include "basewindow.h"
+
 struct StateInfo{
 
 };
+
+//Request for compiler to implement this in the place of the call to get rid off overhead
+inline StateInfo* GetAppState(HWND hwnd){
+  LONG_PTR ptr = GetWindowLongPtr(hwnd, GWLP_USERDATA);
+  StateInfo *pState = reinterpret_cast<StateInfo*>(ptr);
+  return pState;
+}
 
 void OnSize(HWND hwnd, UINT flag, int width, int height){
   //TODO
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
+
+  //CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
+  //pState
+
+  StateInfo* pState;
+  if(uMsg == WM_CREATE){
+    //Most dangerous casting
+    CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
+    //pState points to lpCreateParams
+    pState = reinterpret_cast<StateInfo*>(pCreate->lpCreateParams);
+    SetWindowLongPtr(hwnd,GWLP_USERDATA, (LONG_PTR)pState);
+  }
+  else{
+    pState = GetAppState(hwnd);
+  }
 
   switch(uMsg){
     /*
@@ -74,13 +98,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine,
 
   //Is using new good idea?
   //StateInfo *pState = new (std::nothrow) StateInfo;
-
-  //CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT>
-
-  //Remember reinterpret_cast
-  //CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
-  //pState = reinterpret_cast<StateInfo*>(pCreate->lpCreateParams);
-  //SetWindowsLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)pState);
 
   //if(pState == NULL){
   //  return 0;
