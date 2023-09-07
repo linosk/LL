@@ -2,14 +2,34 @@
 #define UNICODE
 #endif
 
-#include <tchar.h>
-#include <Windows.h>
-#include <new>
+#include "mainwindow.h"
 
-#include "basewindow.h"
+int WINAPI mWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow)
+{
+    MainWindow win;
 
+    if (!win.Create(L"Learn to Program Windows", WS_OVERLAPPEDWINDOW))
+    {
+        return 0;
+    }
+
+    ShowWindow(win.Window(), nCmdShow);
+
+    // Run the message loop.
+
+    MSG msg = { };
+    while (GetMessage(&msg, NULL, 0, 0))
+    {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+
+    return 0;
+}
+
+/*
 struct StateInfo{
-
+  //TODO
 };
 
 //Request for compiler to implement this in the place of the call to get rid off overhead
@@ -19,9 +39,11 @@ inline StateInfo* GetAppState(HWND hwnd){
   return pState;
 }
 
+
 void OnSize(HWND hwnd, UINT flag, int width, int height){
   //TODO
 }
+
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 
@@ -41,7 +63,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
   }
 
   switch(uMsg){
-    /*
     case WM_SIZE:{
       int width = LOWORD(lParam);
       int height= HIWORD(lParam);
@@ -49,7 +70,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
       OnSize(hwnd, (UINT)wParam, width, height);    
     }break;
     return 0;
-    */
 
     case WM_PAINT:{
       PAINTSTRUCT ps;
@@ -66,14 +86,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
       PostQuitMessage(0);
       return 0;
 
-    /*
     case WM_CLOSE:{
       if (MessageBox(hwnd,L"Really quit?",L"My application",MB_OKCANCEL) == IDOK){
         DestroyWindow(hwnd);
       }
     }
     return 0;
-    */
   }
 
   return DefWindowProc(hwnd,uMsg,wParam,lParam);
@@ -140,3 +158,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine,
 
   return 0;
 }
+
+*/
