@@ -7,7 +7,15 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, int nCmdShow){
     MainWindow win;
 
-    if (!win.Create(L"Learn to Program Windows", WS_OVERLAPPEDWINDOW))
+    if (!win.Create(L"Learn to Program Windows", 
+                    WS_OVERLAPPEDWINDOW,
+                    0,
+                    CW_USEDEFAULT,
+                    CW_USEDEFAULT,
+                    CW_USEDEFAULT,
+                    CW_USEDEFAULT,
+                    0,
+                    0))
     {
         return 0;
     }
