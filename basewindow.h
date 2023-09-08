@@ -24,6 +24,20 @@ public:
     BOOL Create(
         PCWSTR lpWindowName,
         DWORD dwStyle,
+        DWORD dwExStyle ,
+        int x,
+        int y,
+        int nWidth,
+        int nHeight,
+        HWND hWndParent,
+        HMENU hMenu
+    );
+
+    //Default arguments
+    /*
+    BOOL Create(
+        PCWSTR lpWindowName,
+        DWORD dwStyle,
         DWORD dwExStyle = 0,
         int x = CW_USEDEFAULT,
         int y = CW_USEDEFAULT,
@@ -32,6 +46,7 @@ public:
         HWND hWndParent = 0,
         HMENU hMenu = 0
     );
+    */
 
     //public vs protected vs private
     //public can be accesed outside of class
