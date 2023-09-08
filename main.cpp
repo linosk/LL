@@ -4,8 +4,7 @@
 
 #include "mainwindow.h"
 
-int WINAPI mWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow)
-{
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, int nCmdShow){
     MainWindow win;
 
     if (!win.Create(L"Learn to Program Windows", WS_OVERLAPPEDWINDOW))
