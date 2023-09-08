@@ -2,6 +2,8 @@
 #define MAIN_WINDOW_H
 
 #include "basewindow.h"
+//WTF?
+#include "basewindow.cpp"
 
 class MainWindow : public BaseWindow<MainWindow>{
     public:
