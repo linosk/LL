@@ -3,7 +3,8 @@
 
 #include "basewindow.h"
 //WTF?
-#include "basewindow.cpp"
+//so ugly
+#include "../src/basewindow.cpp"
 
 class MainWindow : public BaseWindow<MainWindow>{
     public:
