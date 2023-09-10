@@ -1,7 +1,5 @@
 #include "basewindow.h"
 
-#include <iostream>
-
 template <class DERIVED_TYPE>
 
 //Apperently it is enough to define that funciont is static in header file
