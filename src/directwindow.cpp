@@ -18,7 +18,7 @@ void DirectWindow::CalculateLayout(){
         ellipse = D2D1::Ellipse(D2D1::Point2F(x,y), radius, radius);
     }
 }
-
+    //Creates two resources, pRenderTarget and pBrush 
     HRESULT DirectWindow::CreateGraphicsResources(){
         HRESULT hr = S_OK;
         if(pRenderTarget == NULL){
@@ -70,6 +70,7 @@ void DirectWindow::OnPaint(){
     }
 }
 
+//Remember about DPI
 void DirectWindow::Resize(){
     if (pRenderTarget !=NULL){
         RECT rc;
