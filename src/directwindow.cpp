@@ -86,6 +86,7 @@ void DirectWindow::Resize(){
 
 LRESULT DirectWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    //No default
     switch (uMsg)
     {
     case WM_CREATE:
@@ -106,7 +107,11 @@ LRESULT DirectWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
         OnPaint();
         return 0;
 
-
+    //case WM_LBUTTONDOWN:{
+    case WM_LBUTTONUP:{ // UP when the button goes UP after being pressed (being DOWN)
+        exit(0);
+        //return 0;
+    }
 
     case WM_SIZE:
         Resize();
