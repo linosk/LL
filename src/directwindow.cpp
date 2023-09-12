@@ -10,6 +10,7 @@ template <class T> void SafeRelease(T **ppT)
 }
 
 void DirectWindow::CalculateLayout(){
+    /*
     if (pRenderTarget != NULL){
         D2D1_SIZE_F size = pRenderTarget->GetSize();
         const float x = size.width/2;
@@ -17,6 +18,7 @@ void DirectWindow::CalculateLayout(){
         const float radius = std::min(x,y);
         ellipse = D2D1::Ellipse(D2D1::Point2F(x,y), radius, radius);
     }
+    */
 }
     //Creates two resources, pRenderTarget and pBrush 
     HRESULT DirectWindow::CreateGraphicsResources(){
@@ -109,8 +111,11 @@ LRESULT DirectWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     //case WM_LBUTTONDOWN:{
     case WM_LBUTTONUP:{ // UP when the button goes UP after being pressed (being DOWN)
-        exit(0);
-        //return 0;
+        //exit(0);
+        int xPos = LOWORD(lParam); 
+        int yPos = HIWORD(lParam);
+
+        return 0;
     }
 
     case WM_SIZE:

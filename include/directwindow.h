@@ -15,6 +15,7 @@ class DirectWindow : public BaseWindow<DirectWindow>{
     ID2D1HwndRenderTarget   *pRenderTarget;
     ID2D1SolidColorBrush    *pBrush;
     D2D1_ELLIPSE            ellipse;
+    D2D1_POINT_2F           ptMouse;
 
     void    CalculateLayout();
     HRESULT CreateGraphicsResources();
@@ -24,12 +25,15 @@ class DirectWindow : public BaseWindow<DirectWindow>{
 
 public:
     //What does it mean? - it initiliazs the class members of DirectWindow
-    DirectWindow() : pFactory(NULL), pRenderTarget(NULL), pBrush(NULL)
+    DirectWindow() : pFactory(NULL), pRenderTarget(NULL), pBrush(NULL), ellipse(D2D1::Ellipse(D2D1::Point2F(), 0, 0)), ptMouse(D2D1::Point2F())
     {
     }
 
     PCWSTR  ClassName() const { return L"Circle Window Class"; }
     LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
+    void OnLButtonDown(int pixelX, int pixelY, DWORD flags);
+    void OnLButtonUp();
+    void OnMouseMove(int pixelX, int pixelY, DWORD flags);
 };
 
 #endif
