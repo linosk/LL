@@ -15,7 +15,8 @@ class DPI_Scale{
     public:
         static void Initialize(HWND hwnd);
 
-        template <template T>
+        //Can template be replced with class
+        template <class T>
         static D2D1_POINT_2F PixelsToDips(T x, T y);
 };
 
