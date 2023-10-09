@@ -9,3 +9,6 @@ Learning about Windows API(Windows.h) and computer graphics.
 - cd build
 - cmake -S ../ -B . 
 - make
+
+# Run
+./LL
