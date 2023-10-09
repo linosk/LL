@@ -5,8 +5,7 @@ Windows GUI application for language learning, inspiration https://learning-with
 Learning about Windows API(Windows.h) and computer graphics
 
 # Build
-Run:
-mkdir build
-cd build
-cmake -S ../ -B .
-make
+mkdir build;
+cd build;
+cmake -S ../ -B . ;
+make;
